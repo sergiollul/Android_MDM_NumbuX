@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NumbuX"
+rootProject.name = "Numbux"
 include(":app")

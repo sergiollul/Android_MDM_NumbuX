@@ -1,4 +1,4 @@
-package com.numbux.mdm
+package com.numbux.numbux
 
 import org.junit.Test
 

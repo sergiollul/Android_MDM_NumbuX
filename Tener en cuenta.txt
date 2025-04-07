@@ -1,0 +1,8 @@
+1. Confirm Accessibility Service is Enabled
+Go to:
+
+Phone Settings → Accessibility → Installed Services → NumbuX
+
+🔁 Turn it ON
+
+If this is off, your FocusService never runs, so nothing gets blocked.
