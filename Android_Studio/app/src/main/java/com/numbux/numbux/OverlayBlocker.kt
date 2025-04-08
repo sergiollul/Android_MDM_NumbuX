@@ -10,45 +10,50 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import android.view.inputmethod.InputMethodManager // Import for InputMethodManager
+import android.app.AlertDialog
+import android.content.DialogInterface
 
 object OverlayBlocker {
-    private var overlayView: View? = null
+    private var dialog: AlertDialog? = null
 
     fun show(context: Context) {
-        if (overlayView != null) return
+        if (dialog != null && dialog!!.isShowing) return  // Avoid opening multiple dialogs
 
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
-        overlayView = inflater.inflate(R.layout.activity_overlay, null)
+        val view = inflater.inflate(R.layout.dialog_pin_input, null)
 
-        val layoutParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.MATCH_PARENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else
-                WindowManager.LayoutParams.TYPE_PHONE,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-            PixelFormat.TRANSLUCENT
-        )
+        builder.setView(view)
+        builder.setCancelable(false)  // Prevent dismissing by tapping outside
 
-        layoutParams.gravity = Gravity.CENTER
+        val input = view.findViewById<EditText>(R.id.pinInput)
+        val btnExit = view.findViewById<Button>(R.id.btnExit)
 
-        val btn = overlayView!!.findViewById<Button>(R.id.btnExit)
-        val input = overlayView!!.findViewById<EditText>(R.id.pinInput)
+        // Show the dialog
+        dialog = builder.create()
+        dialog?.show()
 
-        btn.setOnClickListener {
+        // Request focus for the EditText
+        input.requestFocus()
+
+        // Add a delay before showing the keyboard
+        val handler = android.os.Handler()
+        handler.postDelayed({
+            // Show the keyboard after a short delay
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+        }, 200) // Adjust delay as needed
+
+        btnExit.setOnClickListener {
             val pin = input.text.toString()
             if (PinManager.validatePin(context, pin)) {
                 Toast.makeText(context, "Focus Mode Exited", Toast.LENGTH_SHORT).show()
-                wm.removeView(overlayView)
-                overlayView = null
+                dialog?.dismiss()
+                dialog = null
             } else {
                 Toast.makeText(context, "Wrong PIN", Toast.LENGTH_SHORT).show()
             }
         }
-
-        wm.addView(overlayView, layoutParams)
     }
 }

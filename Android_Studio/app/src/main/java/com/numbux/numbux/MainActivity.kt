@@ -46,8 +46,11 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enable Accessibility Service for Focus Mode.", Toast.LENGTH_LONG).show()
                 startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
             } else {
+                // Start the FocusService explicitly if not already started
+                val intent = Intent(this, FocusService::class.java)
+                startService(intent)
+
                 Toast.makeText(this, "Focus Mode Activated!", Toast.LENGTH_SHORT).show()
-                // Don't call startService — system does it for accessibility services
             }
         }
     }

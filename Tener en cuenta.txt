@@ -1,3 +1,7 @@
+///////////////////
+This must be automatic
+//////////////////
+
 1. Confirm Accessibility Service is Enabled
 Go to:
 
