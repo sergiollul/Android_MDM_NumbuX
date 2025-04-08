@@ -10,9 +10,10 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import android.view.inputmethod.InputMethodManager // Import for InputMethodManager
+import android.view.inputmethod.InputMethodManager
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.util.Log
 
 object OverlayBlocker {
     private var dialog: AlertDialog? = null
@@ -24,6 +25,9 @@ object OverlayBlocker {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.dialog_pin_input, null)
 
+        // Log when trying to show overlay
+        Log.d("OverlayBlocker", "Attempting to show overlay")
+
         builder.setView(view)
         builder.setCancelable(false)  // Prevent dismissing by tapping outside
 
@@ -32,18 +36,30 @@ object OverlayBlocker {
 
         // Show the dialog
         dialog = builder.create()
+
+        // Log when dialog is created
+        Log.d("OverlayBlocker", "Dialog created")
+
         dialog?.show()
+
+        // Log when dialog is shown
+        Log.d("OverlayBlocker", "Dialog shown")
 
         // Request focus for the EditText
         input.requestFocus()
 
+        // Log when focus is requested
+        Log.d("OverlayBlocker", "Input field focused")
+
         // Add a delay before showing the keyboard
         val handler = android.os.Handler()
         handler.postDelayed({
-            // Show the keyboard after a short delay
             val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
-        }, 200) // Adjust delay as needed
+
+            // Log when keyboard is triggered
+            Log.d("OverlayBlocker", "Keyboard triggered")
+        }, 200) // 200ms delay to ensure UI elements are ready
 
         btnExit.setOnClickListener {
             val pin = input.text.toString()
