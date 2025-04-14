@@ -1,0 +1,5 @@
+package com.app_lock_flutter
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {}
